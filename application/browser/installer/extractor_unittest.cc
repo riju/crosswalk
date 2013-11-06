@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "xwalk/application/browser/installer/xpk_extractor.h"
+#include "xwalk/application/browser/installer/extractor.h"
 
 #include "base/file_util.h"
 #include "base/files/scoped_temp_dir.h"
@@ -28,7 +28,7 @@ class XPKExtractorTest : public testing::Test {
         .AppendASCII(xpk_name);
     ASSERT_TRUE(base::PathExists(xpk_path)) << xpk_path.value();
 
-    extractor_ = XPKExtractor::Create(xpk_path);
+    extractor_ = Extractor::Create(xpk_path);
   }
 
  protected:

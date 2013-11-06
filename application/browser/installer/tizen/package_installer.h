@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef XWALK_APPLICATION_BROWSER_INSTALLER_TIZEN_PACKAGE_INSTALLER_H_
-#define XWALK_APPLICATION_BROWSER_INSTALLER_TIZEN_PACKAGE_INSTALLER_H_
+#ifndef APPLICATION_BROWSER_INSTALLER_TIZEN_PACKAGE_INSTALLER_H_
+#define APPLICATION_BROWSER_INSTALLER_TIZEN_PACKAGE_INSTALLER_H_
 
 #include <unistd.h>
 #include <string>
@@ -56,4 +56,4 @@ class PackageInstaller
 }  // namespace application
 }  // namespace xwalk
 
-#endif  // XWALK_APPLICATION_BROWSER_INSTALLER_TIZEN_PACKAGE_INSTALLER_H_
+#endif  // APPLICATION_BROWSER_INSTALLER_TIZEN_PACKAGE_INSTALLER_H_

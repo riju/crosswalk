@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef XWALK_APPLICATION_BROWSER_INSTALLER_XPK_PACKAGE_H_
-#define XWALK_APPLICATION_BROWSER_INSTALLER_XPK_PACKAGE_H_
+#ifndef APPLICATION_BROWSER_INSTALLER_XPK_PACKAGE_H_
+#define APPLICATION_BROWSER_INSTALLER_XPK_PACKAGE_H_
 
 #include <string>
 #include <vector>
@@ -11,11 +11,12 @@
 #include "base/files/file_path.h"
 #include "base/memory/scoped_handle.h"
 #include "base/memory/scoped_ptr.h"
+#include "xwalk/application/browser/installer/package.h"
 
 namespace xwalk {
 namespace application {
 
-class XPKPackage {
+class XPKPackage : public Package {
  public:
   static const char kXPKPackageHeaderMagic[];
   static const size_t kXPKPackageHeaderMagicSize = 4;
@@ -29,26 +30,21 @@ class XPKPackage {
   };
   XPKPackage();
   ~XPKPackage();
-  static scoped_ptr<XPKPackage> Create(const base::FilePath& path);
+  static scoped_ptr<Package> Create(const base::FilePath& path);  // OVERRIDE
   // Validate the xpk file
-  bool IsOk() const { return is_ok_; }
-  const std::string& Id() const { return id_; }
 
  private:
   XPKPackage(Header header, ScopedStdioHandle* file);
-  bool Validate();
+  virtual bool Validate() OVERRIDE;
 
   Header header_;
-  scoped_ptr<ScopedStdioHandle> file_;
   std::vector<uint8> signature_;
   std::vector<uint8> key_;
   // It's the beginning address of the zip file
   int zip_addr_;
-  bool is_ok_;
-  std::string id_;
 };
 
 }  // namespace application
 }  // namespace xwalk
 
-#endif  // XWALK_APPLICATION_BROWSER_INSTALLER_XPK_PACKAGE_H_
+#endif  // APPLICATION_BROWSER_INSTALLER_XPK_PACKAGE_H_

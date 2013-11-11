@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef APPLICATION_BROWSER_INSTALLER_PACKAGE_H_
-#define APPLICATION_BROWSER_INSTALLER_PACKAGE_H_
+#ifndef XWALK_APPLICATION_BROWSER_INSTALLER_PACKAGE_H_
+#define XWALK_APPLICATION_BROWSER_INSTALLER_PACKAGE_H_
 
 #include <string>
 #include <vector>
@@ -17,10 +17,6 @@ namespace application {
 
 class Package {
  public:
-  enum PACKAGE_TYPE {
-    XPK,
-    WGT
-  };
   Package();
   Package(ScopedStdioHandle* file, bool is_ok);
   virtual ~Package();
@@ -29,6 +25,10 @@ class Package {
   const std::string& Id() const { return id_; }
   static scoped_ptr<Package> Create(const base::FilePath& path);
  protected:
+  enum PACKAGE_TYPE {
+      XPK,
+      WGT
+    };
   scoped_ptr<ScopedStdioHandle> file_;
   bool is_ok_;
   std::string id_;
@@ -37,4 +37,4 @@ class Package {
 }  // namespace application
 }  // namespace xwalk
 
-#endif  // APPLICATION_BROWSER_INSTALLER_PACKAGE_H_
+#endif  // XWALK_APPLICATION_BROWSER_INSTALLER_PACKAGE_H_

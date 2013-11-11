@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef APPLICATION_BROWSER_INSTALLER_EXTRACTOR_H_
-#define APPLICATION_BROWSER_INSTALLER_EXTRACTOR_H_
+#ifndef XWALK_APPLICATION_BROWSER_INSTALLER_EXTRACTOR_H_
+#define XWALK_APPLICATION_BROWSER_INSTALLER_EXTRACTOR_H_
 
 #include <string>
 
@@ -23,6 +23,7 @@ class Extractor
   // to decompress by the parameter |target_path|.
   bool Extract(base::FilePath* target_path);
   std::string GetPackageID() const;
+  Package* GetPackage();
 
  private:
   friend class base::RefCountedThreadSafe<Extractor>;
@@ -39,4 +40,4 @@ class Extractor
 }  // namespace application
 }  // namespace xwalk
 
-#endif  // APPLICATION_BROWSER_INSTALLER_EXTRACTOR_H_
+#endif  // XWALK_APPLICATION_BROWSER_INSTALLER_EXTRACTOR_H_

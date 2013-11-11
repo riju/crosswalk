@@ -74,25 +74,32 @@ bool ApplicationService::Install(const base::FilePath& path, std::string* id) {
   }
 
   std::string error;
-  scoped_refptr<Application> application =
-      LoadApplication(unpacked_dir,
-                      app_id,
-                      Manifest::COMMAND_LINE,
-                      &error);
-  if (!application) {
-    LOG(ERROR) << "Error during application installation: " << error;
-    return false;
+  if (path.MatchesExtension(".xpk")) {
+      scoped_refptr<Application> application =
+          LoadApplication(unpacked_dir,
+              app_id,
+              Manifest::COMMAND_LINE,
+              &error);
+      if (!application) {
+          LOG(ERROR) << "Error during application installation: " << error;
+          return false;
+      }
+
+      if (app_store_->AddApplication(application)) {
+          LOG(INFO) << "Installed application with id: " << application->ID()
+                              << " successfully.";
+          *id = application->ID();
+          return true;
+      }
+
+      LOG(ERROR) << "Application with id " << application->ID()
+                             << " couldn't be installed.";
+
+  }
+  else if (path.MatchesExtension(".wgt")) {
+      NOTIMPLEMENTED();
   }
 
-  if (app_store_->AddApplication(application)) {
-    LOG(INFO) << "Installed application with id: " << application->ID()
-              << " successfully.";
-    *id = application->ID();
-    return true;
-  }
-
-  LOG(ERROR) << "Application with id " << application->ID()
-             << " couldn't be installed.";
   return false;
 }
 

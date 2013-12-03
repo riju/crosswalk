@@ -29,6 +29,7 @@ class Manifest {
     INVALID_TYPE,
     INTERNAL,           // Load from internal application registry.
     COMMAND_LINE,       // Load from an unpacked application from command line.
+    LEGACY_WGT_APP,
     NUM_TYPES
   };
 

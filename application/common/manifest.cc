@@ -23,6 +23,8 @@ Manifest::Manifest(SourceType source_type,
     : source_type_(source_type),
       data_(value.Pass()),
       type_(TYPE_UNKNOWN) {
+  // TODO(riju): temporarily think of .wgt file as default type
+  // source_type_ = LEGACY_WGT_APP;
   if (data_->HasKey(keys::kAppKey)) {
     if (data_->Get(keys::kWebURLsKey, NULL) ||
         data_->Get(keys::kLaunchWebURLKey, NULL)) {

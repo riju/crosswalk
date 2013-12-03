@@ -39,6 +39,11 @@ scoped_refptr<Application> LoadApplication(
     Manifest::SourceType source_type,
     std::string* error);
 
+// Loads an Legacy application (.wgt )manifest from the specified directory.
+// Returns NULL on failure, with a description of the error in |error|.
+base::DictionaryValue* LoadManifestWgt(const base::FilePath& application_root,
+                                    std::string* error);
+
 // Loads an application manifest from the specified directory. Returns NULL
 // on failure, with a description of the error in |error|.
 base::DictionaryValue* LoadManifest(const base::FilePath& application_root,

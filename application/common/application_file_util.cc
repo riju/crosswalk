@@ -17,6 +17,7 @@
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
+#include "third_party/libxml/chromium/libxml_utils.h"
 #include "xwalk/application/common/application.h"
 #include "xwalk/application/common/constants.h"
 #include "xwalk/application/common/manifest.h"
@@ -69,6 +70,70 @@ scoped_refptr<Application> LoadApplication(
   return application;
 }
 
+DictionaryValue* LoadManifestWgt(const base::FilePath& application_path,
+                              std::string* error) {
+  base::FilePath manifest_path =
+        application_path.Append(kConfigXmlFilename);
+    if (!base::PathExists(manifest_path)) {
+      *error = base::StringPrintf("%s",
+                                  errors::kManifestUnreadable);
+      return NULL;
+    }
+
+    DictionaryValue* xml_root = new base::DictionaryValue();
+
+    XmlReader xml_reader;
+    std::string xml_contents;
+
+    if (!ReadFileToString(manifest_path, &xml_contents))
+      return NULL;
+    if (!xml_reader.Load(xml_contents))
+        return NULL;
+
+    if (!xml_reader.SkipToElement() || !xml_reader.Read()) {
+        LOG(ERROR) << "Could not read config file.";
+        return NULL;
+    }
+    // now we should be at <widget> element
+    do {
+        if (xml_reader.NodeName() == "widget")
+          break;
+      } while (xml_reader.Next());
+    // Descend into <widget> element.
+    while (xml_reader.Read()) {
+        std::string value;
+        if (!xml_reader.NodeAttribute("name", &value))
+            return false;
+        else
+          xml_root->SetString("name", value);
+
+        if (!xml_reader.NodeAttribute("description", &value))
+            return false;
+        else
+          xml_root->SetString("description", value);
+
+        if (!xml_reader.NodeAttribute("content", &value))
+          return false;
+        else
+          xml_root->SetString("content", value);
+
+        if (!xml_reader.NodeAttribute("icon", &value))
+          return false;
+        else
+          xml_root->SetString("icon", value);
+
+        if (!xml_reader.NodeAttribute("tizen:application", &value)) {
+          return false;
+        } else {
+          // parse the tizen:application element (id/package/required_version)
+          // as of now temporary values
+            xml_root->SetString("package_id", "nrT4AQuzWO");
+            xml_root->SetString("VersionString", "1.0");
+        }
+    }
+    return xml_root;
+}
+
 DictionaryValue* LoadManifest(const base::FilePath& application_path,
                               std::string* error) {
   base::FilePath manifest_path =
@@ -102,7 +167,6 @@ DictionaryValue* LoadManifest(const base::FilePath& application_path,
                                 errors::kManifestUnreadable);
     return NULL;
   }
-
   return static_cast<DictionaryValue*>(root.release());
 }
 

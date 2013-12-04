@@ -11,7 +11,6 @@
 #include "base/memory/ref_counted.h"
 #include "xwalk/application/common/manifest.h"
 
-
 class GURL;
 
 namespace base {
@@ -30,6 +29,7 @@ class Application;
 scoped_refptr<Application> LoadApplication(
     const base::FilePath& application_root,
     Manifest::SourceType source_type,
+    bool isLegacyWgt,
     std::string* error);
 
 // The same as LoadApplication except use the provided |application_id|.
@@ -37,6 +37,7 @@ scoped_refptr<Application> LoadApplication(
     const base::FilePath& application_root,
     const std::string& application_id,
     Manifest::SourceType source_type,
+    bool isLegacyWgt,
     std::string* error);
 
 // Loads an Legacy application (.wgt )manifest from the specified directory.

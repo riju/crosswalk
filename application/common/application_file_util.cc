@@ -36,38 +36,72 @@ namespace application {
 scoped_refptr<Application> LoadApplication(
     const base::FilePath& application_path,
     Manifest::SourceType source_type,
+    bool isLegacyWgt,
     std::string* error) {
   return LoadApplication(application_path, std::string(),
-                         source_type, error);
+                         source_type, isLegacyWgt,
+                         error);
 }
 
 scoped_refptr<Application> LoadApplication(
     const base::FilePath& application_path,
     const std::string& application_id,
     Manifest::SourceType source_type,
+    bool isLegacyWgt,
     std::string* error) {
-  scoped_ptr<DictionaryValue> manifest(LoadManifest(application_path, error));
-  if (!manifest.get())
-    return NULL;
+  LOG(INFO) << "application_path: " << UTF8ToWide(application_path.value());
+  LOG(INFO) << "isLegacyWgt --in appl_file_util: " << isLegacyWgt;
 
-  scoped_refptr<Application> application = Application::Create(application_path,
-                                                             source_type,
-                                                             *manifest,
-                                                             application_id,
-                                                             error);
-  if (!application.get())
-    return NULL;
 
-  std::vector<InstallWarning> warnings;
-  if (!ManifestHandlerRegistry::GetInstance()->ValidateAppManifest(
-          application, error, &warnings))
-    return NULL;
-  if (!warnings.empty()) {
-    LOG(WARNING) << "There are some warnings when validating the application "
-                 << application->ID();
+  if(isLegacyWgt) {
+    scoped_ptr<DictionaryValue> manifest(LoadManifestWgt(application_path, error));
+    if (!manifest.get())
+        return NULL;
+
+      scoped_refptr<Application> application = Application::Create(application_path,
+                                                                 source_type,
+                                                                 *manifest,
+                                                                 application_id,
+                                                                 error);
+      if (!application.get())
+        return NULL;
+
+      std::vector<InstallWarning> warnings;
+      if (!ManifestHandlerRegistry::GetInstance()->ValidateAppManifest(
+              application, error, &warnings))
+        return NULL;
+      if (!warnings.empty()) {
+        LOG(WARNING) << "There are some warnings when validating the application "
+                     << application->ID();
+      }
+
+      return application;
+  }
+  else {
+    scoped_ptr<DictionaryValue> manifest(LoadManifest(application_path, error));
+    if (!manifest.get())
+        return NULL;
+
+      scoped_refptr<Application> application = Application::Create(application_path,
+                                                                 source_type,
+                                                                 *manifest,
+                                                                 application_id,
+                                                                 error);
+      if (!application.get())
+        return NULL;
+
+      std::vector<InstallWarning> warnings;
+      if (!ManifestHandlerRegistry::GetInstance()->ValidateAppManifest(
+              application, error, &warnings))
+        return NULL;
+      if (!warnings.empty()) {
+        LOG(WARNING) << "There are some warnings when validating the application "
+                     << application->ID();
+      }
+
+      return application;
   }
 
-  return application;
 }
 
 DictionaryValue* LoadManifestWgt(const base::FilePath& application_path,
@@ -101,27 +135,30 @@ DictionaryValue* LoadManifestWgt(const base::FilePath& application_path,
       } while (xml_reader.Next());
     // Descend into <widget> element.
     while (xml_reader.Read()) {
+        xml_reader.SkipToElement();
+        std::string node_name(xml_reader.NodeName());
         std::string value;
         if (!xml_reader.NodeAttribute("name", &value))
             return false;
         else
           xml_root->SetString("name", value);
+        LOG(INFO) << "name = " << value;
 
         if (!xml_reader.NodeAttribute("description", &value))
             return false;
         else
           xml_root->SetString("description", value);
-
+        LOG(INFO) << "desc = " << value;
         if (!xml_reader.NodeAttribute("content", &value))
           return false;
         else
           xml_root->SetString("content", value);
-
+        LOG(INFO) << "content = " << value;
         if (!xml_reader.NodeAttribute("icon", &value))
           return false;
         else
           xml_root->SetString("icon", value);
-
+        LOG(INFO) << "icon = " << value;
         if (!xml_reader.NodeAttribute("tizen:application", &value)) {
           return false;
         } else {
@@ -130,7 +167,25 @@ DictionaryValue* LoadManifestWgt(const base::FilePath& application_path,
             xml_root->SetString("package_id", "nrT4AQuzWO");
             xml_root->SetString("VersionString", "1.0");
         }
+        LOG(INFO) << "package_id = " << value;
+        LOG(INFO) << "VersionString = " << value;
     }
+
+    xml_root->SetString("name", "hangonman");
+    xml_root->SetString("version", "1.0");
+    xml_root->SetString("content", "index.html");
+    xml_root->SetString("icon", "icon_128.png");
+
+    std::string value;
+    if (xml_root->GetString("name", &value))
+      LOG(INFO) << "name = " << value;
+    if (xml_root->GetString("version", &value))
+          LOG(INFO) << "version = " << value;
+    if (xml_root->GetString("content", &value))
+          LOG(INFO) << "content = " << value;
+    if (xml_root->GetString("icon", &value))
+          LOG(INFO) << "icon = " << value;
+
     return xml_root;
 }
 

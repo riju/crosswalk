@@ -184,9 +184,10 @@ bool ApplicationService::Launch(const base::FilePath& path) {
     return false;
 
   std::string error;
-  //TODO(riju) : temporary hack, during launch we specify that isLegacyWgt = false
+  // TODO(riju) : temporary hack, during launch we specify that
+  // isLegacyWgt = false
   scoped_refptr<const Application> application =
-      LoadApplication(path, Manifest::COMMAND_LINE, false ,&error);
+      LoadApplication(path, Manifest::COMMAND_LINE, false , &error);
 
   if (!application) {
     LOG(ERROR) << "Error during launch application: " << error;

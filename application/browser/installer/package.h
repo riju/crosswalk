@@ -35,6 +35,7 @@ class Package {
   // The function will unzip the XPK/WGT file and return the target path where
   // to decompress by the parameter |target_path|.
   bool Extract(base::FilePath* target_path);
+
  protected:
   explicit Package(PackageType pkg_type, const base::FilePath& source_path);
   scoped_ptr<ScopedStdioHandle> file_;
